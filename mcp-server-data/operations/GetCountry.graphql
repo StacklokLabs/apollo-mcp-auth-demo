@@ -1,0 +1,13 @@
+query GetCountry($code: String!) {
+  country(code: $code) {
+    code
+    name
+    capital
+    currency
+    emoji
+    continent {
+      code
+      name
+    }
+  }
+}

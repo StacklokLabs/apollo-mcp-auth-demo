@@ -1,0 +1,13 @@
+query GetCountriesByContinent($continentCode: String!) {
+  countriesByContinent(continentCode: $continentCode) {
+    code
+    name
+    capital
+    currency
+    emoji
+    continent {
+      code
+      name
+    }
+  }
+}

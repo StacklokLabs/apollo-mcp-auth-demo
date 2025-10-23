@@ -1,0 +1,13 @@
+query GetEuropeanCountries {
+  europeanCountries {
+    code
+    name
+    capital
+    currency
+    emoji
+    continent {
+      code
+      name
+    }
+  }
+}

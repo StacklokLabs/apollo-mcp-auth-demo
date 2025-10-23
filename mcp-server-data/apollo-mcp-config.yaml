@@ -1,0 +1,46 @@
+endpoint: http://host.docker.internal:4000/
+
+transport:
+  type: sse
+  port: 8000
+  auth:
+    servers:
+      - https://integrator-3683736.okta.com/oauth2/auswdh3wurjeJ62La697
+    audiences:
+      - backend
+    resource: http://localhost:8000/mcp
+    scopes:
+      - backend-api:read
+    disable_auth_token_passthrough: false
+
+# Use local schema file (no GraphOS required)
+schema:
+  source: local
+  path: /data/schema.graphql
+
+# Enable introspection tools for AI to explore schema dynamically
+#introspection:
+#  introspect:
+#    enabled: true
+#    minify: true
+#  search:
+#    enabled: true
+#  validate:
+#    enabled: true
+#  execute:
+#    enabled: true
+
+# Load predefined operations from files (each becomes an MCP tool)
+operations:
+  source: local
+  paths:
+    - /data/operations/
+
+# Optional: Okta OAuth configuration for authenticated requests
+# Uncomment when REQUIRE_AUTH=true
+# oauth:
+#   delegation:
+#     servers:
+#       - https://integrator-3683736.okta.com/oauth2/default
+#     audiences:
+#       - api://default

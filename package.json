@@ -1,0 +1,24 @@
+{
+  "name": "apollo-gateway-demo",
+  "version": "1.0.0",
+  "description": "Demo Apollo GraphQL Gateway",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "apollo",
+    "graphql",
+    "gateway"
+  ],
+  "author": "jakub@stacklok.com",
+  "license": "MIT",
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "@okta/jwt-verifier": "^4.0.2",
+    "dotenv": "^17.2.3",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0"
+  }
+}
