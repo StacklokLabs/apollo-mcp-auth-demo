@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apollo-oauth-client-secret
+  namespace: apollo
+type: Opaque
+stringData:
+  client-secret: "<YOUR_OAUTH_CLIENT_SECRET>"
+---
+apiVersion: toolhive.stacklok.dev/v1alpha1
+kind: MCPExternalAuthConfig
+metadata:
+  name: apollo-token-exchange
+  namespace: apollo
+spec:
+  type: tokenExchange
+  tokenExchange:
+    # Token exchange endpoint
+    tokenUrl: "<YOUR_TOKEN_EXCHANGE_URL>"
+
+    # Target audience for the exchanged token
+    audience: "<YOUR_BACKEND_AUDIENCE>"
+
+    # OAuth client credentials
+    clientId: "<YOUR_OAUTH_CLIENT_ID>"
+    clientSecretRef:
+      name: apollo-oauth-client-secret
+      key: client-secret
+
+    # Requested scopes
+    scopes:
+      - "<YOUR_REQUIRED_SCOPES>"

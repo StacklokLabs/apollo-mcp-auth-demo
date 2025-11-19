@@ -1,0 +1,71 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: ngrok-gateway
+  namespace: toolhive-system
+spec:
+  gatewayClassName: ngrok
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: <YOUR_NGROK_HOSTNAME>
+      allowedRoutes:
+        namespaces:
+          from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: apollo-mcp-route
+  namespace: apollo
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: ngrok-gateway
+      namespace: toolhive-system
+  hostnames:
+    - <YOUR_NGROK_HOSTNAME>
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /apollo
+      backendRefs:
+        - name: mcp-apollo-proxy
+          port: 8080
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: "/mcp"
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: apollo-wellknown-insertion-route
+  namespace: apollo
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: ngrok-gateway
+      namespace: toolhive-system
+  hostnames:
+    - <YOUR_NGROK_HOSTNAME>
+  rules:
+    - matches:
+        - path:
+            type: Exact
+            value: /.well-known/oauth-protected-resource/apollo
+      backendRefs:
+        - name: mcp-apollo-proxy
+          port: 8080
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplaceFullPath
+              replaceFullPath: /.well-known/oauth-protected-resource

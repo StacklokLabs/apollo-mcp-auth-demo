@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apollo-config
+  namespace: apollo
+data:
+  # Apollo Server Configuration
+  # Replace these values with your OAuth provider configuration
+  OKTA_DOMAIN: "<YOUR_OKTA_DOMAIN>"
+  OKTA_ISSUER: "<YOUR_OKTA_ISSUER_URL>"
+  OKTA_AUDIENCE: "<YOUR_BACKEND_AUDIENCE>"
+  REQUIRED_SCOPES: "<YOUR_REQUIRED_SCOPES>"
+  REQUIRE_AUTH: "true"
+  PORT: "4000"

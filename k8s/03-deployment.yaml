@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apollo-gateway
+  namespace: apollo
+  labels:
+    app: apollo-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apollo-gateway
+  template:
+    metadata:
+      labels:
+        app: apollo-gateway
+    spec:
+      containers:
+      - name: apollo
+        image: ghcr.io/stackloklabs/apollo-mcp-auth-demo:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+          name: graphql
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: apollo-config
+        livenessProbe:
+          tcpSocket:
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 4000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+      securityContext:
+        fsGroup: 1000

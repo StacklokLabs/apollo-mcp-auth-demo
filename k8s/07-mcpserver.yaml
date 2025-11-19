@@ -1,0 +1,65 @@
+---
+apiVersion: toolhive.stacklok.dev/v1alpha1
+kind: MCPServer
+metadata:
+  name: apollo
+  namespace: apollo
+spec:
+  image: ghcr.io/apollographql/apollo-mcp-server:v1.1.1
+  transport: streamable-http
+  proxyPort: 8080
+  externalAuthConfigRef:
+    name: apollo-token-exchange
+  oidcConfig:
+    type: inline
+    resourceUrl: <YOUR_NGROK_URL>/apollo
+    inline:
+      # Okta Authorization Server issuer URL
+      issuer: <YOUR_OIDC_ISSUER_URL>
+      # Expected audience in the JWT token
+      audience: <YOUR_MCP_AUDIENCE>
+      # JWKS URL for token verification
+      jwksUrl: <YOUR_JWKS_URL>
+  resourceOverrides:
+    proxyDeployment:
+      env:
+        - name: TOOLHIVE_DEBUG
+          value: "true"
+  podTemplateSpec:
+    spec:
+      volumes:
+        - name: apollo-mcp-config
+          configMap:
+            name: apollo-mcp-config
+        - name: apollo-mcp-data
+          configMap:
+            name: apollo-mcp-data
+      containers:
+        - name: mcp
+          args:
+            - /config.yaml
+          volumeMounts:
+            - name: apollo-mcp-config
+              mountPath: /config.yaml
+              subPath: config.yaml
+              readOnly: true
+            - name: apollo-mcp-data
+              mountPath: /data/schema.graphql
+              subPath: schema.graphql
+              readOnly: true
+            - name: apollo-mcp-data
+              mountPath: /data/operations/GetCountry.graphql
+              subPath: GetCountry.graphql
+              readOnly: true
+            - name: apollo-mcp-data
+              mountPath: /data/operations/GetAllCountries.graphql
+              subPath: GetAllCountries.graphql
+              readOnly: true
+            - name: apollo-mcp-data
+              mountPath: /data/operations/GetEuropeanCountries.graphql
+              subPath: GetEuropeanCountries.graphql
+              readOnly: true
+            - name: apollo-mcp-data
+              mountPath: /data/operations/GetCountriesByContinent.graphql
+              subPath: GetCountriesByContinent.graphql
+              readOnly: true

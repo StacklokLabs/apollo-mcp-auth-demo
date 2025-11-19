@@ -1,0 +1,129 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apollo-mcp-config
+  namespace: apollo
+data:
+  config.yaml: |
+    endpoint: http://apollo-gateway.apollo.svc.cluster.local:4000/
+
+    transport:
+      type: sse
+      port: 8080
+      auth:
+        servers:
+          - <YOUR_OKTA_ISSUER_URL>
+        audiences:
+          - <YOUR_BACKEND_AUDIENCE>
+        resource: <YOUR_NGROK_URL>/apollo
+        scopes:
+          - <YOUR_REQUIRED_SCOPES>
+        disable_auth_token_passthrough: false
+
+    schema:
+      source: local
+      path: /data/schema.graphql
+
+    operations:
+      source: local
+      paths:
+        - /data/operations/
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apollo-mcp-data
+  namespace: apollo
+data:
+  schema.graphql: |
+    """Exposes a URL that specifies the behavior of this scalar."""
+    directive @specifiedBy(
+      """The URL that specifies the behavior of this scalar."""
+      url: String!
+    ) on SCALAR
+
+    """
+    Indicates exactly one field must be supplied and this field must not be `null`.
+    """
+    directive @oneOf on INPUT_OBJECT
+
+    type Continent {
+      code: String!
+      name: String!
+    }
+
+    type Country {
+      code: String!
+      name: String!
+      capital: String
+      currency: String
+      emoji: String!
+      continent: Continent!
+    }
+
+    type Query {
+      country(code: String!): Country
+      countries: [Country!]!
+      europeanCountries: [Country!]!
+      countriesByContinent(continentCode: String!): [Country!]!
+    }
+
+  GetCountry.graphql: |
+    query GetCountry($code: String!) {
+      country(code: $code) {
+        code
+        name
+        capital
+        currency
+        emoji
+        continent {
+          code
+          name
+        }
+      }
+    }
+
+  GetAllCountries.graphql: |
+    query GetAllCountries {
+      countries {
+        code
+        name
+        capital
+        currency
+        emoji
+        continent {
+          code
+          name
+        }
+      }
+    }
+
+  GetEuropeanCountries.graphql: |
+    query GetEuropeanCountries {
+      europeanCountries {
+        code
+        name
+        capital
+        currency
+        emoji
+        continent {
+          code
+          name
+        }
+      }
+    }
+
+  GetCountriesByContinent.graphql: |
+    query GetCountriesByContinent($continentCode: String!) {
+      countriesByContinent(continentCode: $continentCode) {
+        code
+        name
+        capital
+        currency
+        emoji
+        continent {
+          code
+          name
+        }
+      }
+    }
