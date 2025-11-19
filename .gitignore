@@ -6,3 +6,4 @@ npm-debug.log
 thv-run-direct.sh
 thv-run-noauth.sh
 thv-run.sh
+.claude/

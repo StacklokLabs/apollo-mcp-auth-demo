@@ -64,3 +64,51 @@ The MCP server will be available at `http://localhost:8000/mcp`.
 ### Adding New Tools
 
 Create `.graphql` files in `mcp-server-data/operations/`. Each operation becomes an MCP tool.
+
+## Kubernetes Deployment
+
+This project includes Kubernetes manifests with ToolHive operator integration.
+
+### Prerequisites
+
+- Kubernetes cluster
+- [ToolHive Operator](https://github.com/stacklok/toolhive) installed
+- [ngrok Operator](https://github.com/ngrok/ngrok-operator) installed (for external access)
+- OAuth provider configured (e.g., Okta)
+
+### Quick Start
+
+1. **Configure the manifests** - Replace placeholder values in `k8s/*.yaml` files with your OAuth configuration
+
+2. **Deploy:**
+   ```bash
+   kubectl apply -f k8s/
+   ```
+
+3. **Verify:**
+   ```bash
+   kubectl get pods -n apollo
+   kubectl get mcpserver -n apollo
+   ```
+
+See [k8s/README.md](k8s/README.md) for detailed deployment instructions, configuration options, and troubleshooting.
+
+### Architecture
+
+```
+Client → ngrok → MCP Proxy → Token Exchange → MCP Server → Apollo Gateway → Countries API
+```
+
+## Docker
+
+Build the container image:
+
+```bash
+docker build -t apollo-gateway .
+```
+
+The image is automatically built and published to `ghcr.io/stackloklabs/apollo-mcp-auth-demo` on every push to main.
+
+## License
+
+Apache 2.0
